@@ -4,37 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>INTELE TV</title>
+    <link href="https://vjs.zencdn.net/7.20.3/video-js.css" rel="stylesheet" />
     <style>
         body { margin: 0; background: #000; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
-        .box { width: 90%; max-width: 450px; padding: 25px; border: 2px solid #ff0000; border-radius: 20px; background: #111; text-align: center; }
-        video { width: 100%; border-radius: 10px; background: #000; }
-        .btn-ready { background: #ff0000; color: white; border: none; padding: 20px; font-size: 1.4rem; font-weight: bold; border-radius: 15px; width: 100%; margin-top: 20px; cursor: pointer; box-shadow: 0 5px 15px rgba(255,0,0,0.4); }
+        .box { width: 90%; max-width: 450px; border: 2px solid red; border-radius: 20px; padding: 20px; background: #111; text-align: center; }
+        .video-js { width: 100% !important; height: 250px !important; border-radius: 10px; }
+        .vjs-big-play-button { background-color: red !important; border-radius: 50% !important; width: 60px !important; height: 60px !important; line-height: 60px !important; margin-left: -30px !important; }
     </style>
 </head>
 <body>
     <div class="box">
-        <h1 style="color:red; margin-bottom:15px;">INTELE TV</h1>
-        <video id="player" controls playsinline poster="https://img.icons8.com/fluent/512/television.png"></video>
-        <button class="btn-ready" onclick="playTV()">VER TELEVISIÓN</button>
+        <h1 style="color:red">INTELE TV</h1>
+        <video id="my-video" class="video-js vjs-default-skin" controls preload="auto" playsinline poster="https://img.icons8.com/fluent/512/television.png">
+            <source src="http://intele.ddns.net/live/0/hls.m3u8" type="application/x-mpegURL">
+        </video>
+        <p style="margin-top:15px; font-size:12px; color:gray;">Si se detiene, recarga la página.</p>
     </div>
 
+    <script src="https://vjs.zencdn.net/7.20.3/video.min.js"></script>
     <script>
-        function playTV() {
-            var v = document.getElementById('player');
-            // Este enlace usa un servidor de Google para saltar el bloqueo de GitHub
-            var finalUrl = 'https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&refresh=240&url=' + encodeURIComponent('http://intele.ddns.net/live/0/hls.m3u8');
-            
-            v.src = finalUrl;
-            v.play();
-            
-            // Si no carga en 3 segundos, lo intenta de nuevo automáticamente
-            setTimeout(function() {
-                if (v.paused) {
-                    v.load();
-                    v.play();
-                }
-            }, 3000);
-        }
+        var player = videojs('my-video');
+        // Esto fuerza al reproductor a intentar conectar aunque no sea HTTPS
+        player.on('error', function() {
+            console.log("Reintentando conexión...");
+            player.src({ src: 'http://intele.ddns.net/live/0/hls.m3u8', type: 'application/x-mpegURL' });
+        });
     </script>
 </body>
 </html>
