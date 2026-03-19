@@ -22,7 +22,7 @@
     <script>
         var video = document.getElementById('video');
         // Usamos la IP directa para evitar bloqueos de DNS
-        var videoSrc = 'http://intele.ddns.net/live/0/hls.m3u8';
+        var videoSrc = 'https://corsproxy.io/?' + encodeURIComponent('http://intele.ddns.net/live/0/hls.m3u8');
 
         function reproducir() {
             // Si estamos en iPhone (Safari), usamos el reproductor nativo
