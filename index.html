@@ -1,24 +1,36 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>INTELE TV</title>
     <style>
-        body { margin: 0; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; color: white; font-family: sans-serif; }
-        iframe { width: 100%; height: 80vh; border: none; }
-        .btn { background: red; color: white; border: none; padding: 15px; font-weight: bold; border-radius: 10px; cursor: pointer; margin-top: 10px; width: 80%; }
+        body { margin: 0; background: #000; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; text-align: center; }
+        .container { width: 90%; max-width: 500px; border: 2px solid #ff0000; border-radius: 20px; padding: 20px; background: #111; }
+        video { width: 100%; border-radius: 10px; background: #000; }
+        .btn-play { background: #ff0000; color: white; border: none; padding: 20px; font-size: 1.3rem; font-weight: bold; border-radius: 12px; cursor: pointer; width: 100%; margin-top: 20px; box-shadow: 0 5px 15px rgba(255,0,0,0.4); }
     </style>
 </head>
 <body>
-    <h1>INTELE EN VIVO</h1>
-    
-    <iframe id="reproductor" src="https://player.vimeo.com/video/824804225?h=4fdb07747b" allow="autoplay; fullscreen" allowfullscreen></iframe>
+    <div class="container">
+        <h1 style="color:red">INTELE TV</h1>
+        <video id="tv" playsinline controls poster="https://img.icons8.com/fluent/512/television.png"></video>
+        <button class="btn-play" onclick="conectar()">ENCENDER TELEVISIÓN</button>
+    </div>
 
-    <button class="btn" onclick="document.getElementById('reproductor').src='https://corsproxy.io/?' + encodeURIComponent('http://intele.ddns.net/live/0/hls.m3u8');">
-        CARGAR SEÑAL DIRECTA
-    </button>
-
-    <p style="font-size: 12px; color: gray;">Si no carga, pícale al botón rojo.</p>
+    <script>
+        function conectar() {
+            var v = document.getElementById('tv');
+            // Usamos tu link directo. Sin "proxys" para que no nos bloqueen.
+            var streamUrl = 'http://intele.ddns.net/live/0/hls.m3u8';
+            
+            v.src = streamUrl;
+            v.play().catch(function() {
+                // Si el navegador se pone terco, intentamos recargar la fuente
+                v.load();
+                v.play();
+            });
+        }
+    </script>
 </body>
 </html>
