@@ -6,18 +6,35 @@
     <title>INTELE TV</title>
     <style>
         body { margin: 0; background: #000; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
-        .box { width: 90%; max-width: 400px; padding: 20px; border: 2px solid red; border-radius: 15px; text-align: center; }
-        video { width: 100%; border-radius: 5px; }
-        button { background: red; color: white; border: none; padding: 15px; font-weight: bold; border-radius: 10px; width: 100%; margin-top: 15px; cursor: pointer; }
+        .box { width: 90%; max-width: 450px; padding: 25px; border: 2px solid #ff0000; border-radius: 20px; background: #111; text-align: center; }
+        video { width: 100%; border-radius: 10px; background: #000; }
+        .btn-ready { background: #ff0000; color: white; border: none; padding: 20px; font-size: 1.4rem; font-weight: bold; border-radius: 15px; width: 100%; margin-top: 20px; cursor: pointer; box-shadow: 0 5px 15px rgba(255,0,0,0.4); }
     </style>
 </head>
 <body>
     <div class="box">
-        <h1>INTELE TV</h1>
-        <video id="tv" controls playsinline></video>
-        <button onclick="document.getElementById('tv').src='http://intele.ddns.net/live/0/hls.m3u8'; document.getElementById('tv').play();">
-            REPRODUCIR AHORA
-        </button>
+        <h1 style="color:red; margin-bottom:15px;">INTELE TV</h1>
+        <video id="player" controls playsinline poster="https://img.icons8.com/fluent/512/television.png"></video>
+        <button class="btn-ready" onclick="playTV()">VER TELEVISIÓN</button>
     </div>
+
+    <script>
+        function playTV() {
+            var v = document.getElementById('player');
+            // Este enlace usa un servidor de Google para saltar el bloqueo de GitHub
+            var finalUrl = 'https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&refresh=240&url=' + encodeURIComponent('http://intele.ddns.net/live/0/hls.m3u8');
+            
+            v.src = finalUrl;
+            v.play();
+            
+            // Si no carga en 3 segundos, lo intenta de nuevo automáticamente
+            setTimeout(function() {
+                if (v.paused) {
+                    v.load();
+                    v.play();
+                }
+            }, 3000);
+        }
+    </script>
 </body>
 </html>
