@@ -7,28 +7,37 @@
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
-        body { margin: 0; background: #000; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
+        body { margin: 0; background: #000; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; text-align: center; }
         video { width: 100%; max-width: 600px; background: #000; }
         .btn-play { background: #ff0000; color: white; border: none; padding: 15px 30px; font-size: 1.2rem; font-weight: bold; border-radius: 10px; cursor: pointer; margin-top: 20px; }
+        .instruccion { font-size: 0.8rem; color: #aaa; margin-top: 10px; padding: 0 20px; }
     </style>
 </head>
 <body>
     <h1>INTELE EN VIVO</h1>
     <video id="video" playsinline controls></video>
     <button class="btn-play" onclick="reproducir()">VER TELEVISIÓN</button>
+    <p class="instruccion">Si no carga, asegúrate de estar usando Chrome o Safari y haber dado permiso de "Contenido no seguro".</p>
 
     <script>
         var video = document.getElementById('video');
+        // Usamos la IP directa para evitar bloqueos de DNS
         var videoSrc = 'http://intele.ddns.net/live/0/hls.m3u8';
+
         function reproducir() {
-            if (Hls.isSupported()) {
+            // Si estamos en iPhone (Safari), usamos el reproductor nativo
+            if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = videoSrc;
+                video.play().catch(function(error) {
+                    alert("Error: Safari bloqueó el video. Ve a Ajustes > Safari y permite 'Contenido no seguro'.");
+                });
+            } 
+            // Para Android o Chrome
+            else if (Hls.isSupported()) {
                 var hls = new Hls();
                 hls.loadSource(videoSrc);
                 hls.attachMedia(video);
                 hls.on(Hls.Events.MANIFEST_PARSED, function() { video.play(); });
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = videoSrc;
-                video.play();
             }
         }
     </script>
