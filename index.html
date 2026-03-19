@@ -5,26 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>INTELE TV</title>
     <link rel="manifest" href="manifest.json">
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
-        body { margin: 0; background: #000; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; text-align: center; }
-        video { width: 100%; max-width: 600px; height: auto; background: #000; }
-        .btn-play { background: #ff0000; color: white; border: none; padding: 15px 30px; font-size: 1.2rem; font-weight: bold; border-radius: 10px; cursor: pointer; margin-top: 20px; box-shadow: 0 4px 10px rgba(255,0,0,0.5); }
+        body { margin: 0; background: #000; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
+        video { width: 100%; max-width: 600px; background: #000; border: 2px solid #333; }
+        .btn-play { background: #ff0000; color: white; border: none; padding: 15px 30px; font-size: 1.2rem; font-weight: bold; border-radius: 10px; cursor: pointer; margin-top: 20px; }
     </style>
 </head>
 <body>
     <h1>INTELE EN VIVO</h1>
-    <video id="video" playsinline controls preload="metadata">
-        <source src="http://intele.ddns.net/live/0/hls.m3u8" type="application/x-mpegURL">
-        Tu navegador no soporta este video.
-    </video>
-    
-    <button class="btn-play" onclick="document.getElementById('video').play()">VER TELEVISIÓN</button>
+    <video id="video" playsinline controls></video>
+    <button class="btn-play" onclick="encender()">VER TELEVISIÓN</button>
 
     <script>
         var video = document.getElementById('video');
-        video.addEventListener('error', function() {
-            video.load();
-        }, true);
+        
+        // Este enlace "puente" convierte tu señal en HTTPS automáticamente
+        var originalUrl = 'http://intele.ddns.net/live/0/hls.m3u8';
+        var secureUrl = 'https://cors-proxy.htmldriven.com/?url=' + encodeURIComponent(originalUrl);
+
+        function encender() {
+            if (Hls.isSupported()) {
+                var hls = new Hls();
+                hls.loadSource(secureUrl);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, function() { video.play(); });
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                // Para iPhone: intentamos el link directo, si falla, el seguro
+                video.src = originalUrl;
+                video.play().catch(function() {
+                    video.src = secureUrl;
+                    video.play();
+                });
+            }
+        }
     </script>
 </body>
 </html>
