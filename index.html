@@ -5,43 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>INTELE TV</title>
     <link rel="manifest" href="manifest.json">
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
-        body { margin: 0; background: #000; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
-        .container { width: 90%; max-width: 600px; text-align: center; }
-        video { width: 100%; border: 2px solid #ff0000; border-radius: 10px; background: #000; }
-        .btn-play { background: #ff0000; color: white; border: none; padding: 18px 35px; font-size: 1.3rem; font-weight: bold; border-radius: 12px; cursor: pointer; margin-top: 25px; box-shadow: 0 5px 15px rgba(255,0,0,0.4); }
+        body { margin: 0; background: #000; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; text-align: center; }
+        .container { width: 95%; max-width: 500px; }
+        video { width: 100%; border-radius: 15px; background: #111; border: 2px solid #ff0000; box-shadow: 0 0 20px rgba(255,0,0,0.3); }
+        .btn-play { background: #ff0000; color: white; border: none; padding: 20px 40px; font-size: 1.4rem; font-weight: bold; border-radius: 50px; cursor: pointer; margin-top: 30px; width: 100%; }
+        p { color: #888; font-size: 0.9rem; margin-top: 15px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>INTELE EN VIVO</h1>
-        <video id="video" playsinline controls></video>
-        <button class="btn-play" id="playBtn">ENCENDER TELE</button>
+        <h1>INTELE TV</h1>
+        <video id="video" playsinline controls poster="https://cdn-icons-png.flaticon.com/512/716/716429.png"></video>
+        <button class="btn-play" onclick="conectar()">ENCENDER TELE</button>
+        <p>Al picar el botón, el video iniciará automáticamente.</p>
     </div>
 
     <script>
-        var video = document.getElementById('video');
-        var btn = document.getElementById('playBtn');
-        // Este enlace es el que conecta con tu casa directamente
-        var videoSrc = 'http://intele.ddns.net/live/0/hls.m3u8';
-
-        btn.addEventListener('click', function() {
-            if (Hls.isSupported()) {
-                var hls = new Hls();
-                hls.loadSource(videoSrc);
-                hls.attachMedia(video);
-                hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                    video.play();
-                    btn.style.display = 'none'; // El botón desaparece al funcionar
-                });
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                // Código especial para que el iPhone NO BLOQUEE la señal
-                video.src = videoSrc;
-                video.play();
-                btn.style.display = 'none';
-            }
-        });
+        function conectar() {
+            var video = document.getElementById('video');
+            // Este es tu enlace directo. Al presionar el botón, el iPhone quita el bloqueo de seguridad.
+            var url = 'http://intele.ddns.net/live/0/hls.m3u8';
+            
+            video.src = url;
+            video.play().catch(function(error) {
+                // Si falla, le avisamos al usuario que refresque
+                alert("Si no carga, por favor recarga la página y vuelve a intentar.");
+            });
+        }
     </script>
 </body>
 </html>
