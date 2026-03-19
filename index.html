@@ -4,34 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>INTELE TV</title>
-    <link rel="manifest" href="manifest.json">
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
         body { margin: 0; background: #000; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; text-align: center; }
-        .container { width: 95%; max-width: 500px; }
-        video { width: 100%; border-radius: 15px; background: #111; border: 2px solid #ff0000; box-shadow: 0 0 20px rgba(255,0,0,0.3); }
-        .btn-play { background: #ff0000; color: white; border: none; padding: 20px 40px; font-size: 1.4rem; font-weight: bold; border-radius: 50px; cursor: pointer; margin-top: 30px; width: 100%; }
-        p { color: #888; font-size: 0.9rem; margin-top: 15px; }
+        .box { width: 90%; max-width: 500px; border: 2px solid #ff0000; padding: 20px; border-radius: 20px; background: #111; }
+        video { width: 100%; border-radius: 10px; background: #000; margin-bottom: 10px; }
+        .btn-play { background: #ff0000; color: white; border: none; padding: 18px 0; font-size: 1.3rem; font-weight: bold; border-radius: 12px; cursor: pointer; width: 100%; box-shadow: 0 5px 15px rgba(255,0,0,0.4); }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="box">
         <h1>INTELE TV</h1>
-        <video id="video" playsinline controls poster="https://cdn-icons-png.flaticon.com/512/716/716429.png"></video>
-        <button class="btn-play" onclick="conectar()">ENCENDER TELE</button>
-        <p>Al picar el botón, el video iniciará automáticamente.</p>
+        <video id="video" playsinline controls></video>
+        <button class="btn-play" onclick="encender()">ENCENDER TV</button>
     </div>
 
     <script>
-        function conectar() {
+        function encender() {
             var video = document.getElementById('video');
-            // Este es tu enlace directo. Al presionar el botón, el iPhone quita el bloqueo de seguridad.
-            var url = 'http://intele.ddns.net/live/0/hls.m3u8';
-            
-            video.src = url;
-            video.play().catch(function(error) {
-                // Si falla, le avisamos al usuario que refresque
-                alert("Si no carga, por favor recarga la página y vuelve a intentar.");
-            });
+            // Usamos un proxy que convierte tu señal en segura para que GitHub NO la bloquee
+            var videoSrc = 'https://corsproxy.io/?' + encodeURIComponent('http://intele.ddns.net/live/0/hls.m3u8');
+
+            if (Hls.isSupported()) {
+                var hls = new Hls();
+                hls.loadSource(videoSrc);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                    video.play();
+                });
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                // Esto es lo que activa el video en iPhone
+                video.src = videoSrc;
+                video.play();
+            }
         }
     </script>
 </body>
